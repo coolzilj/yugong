@@ -9,7 +9,9 @@ class OAuthController < ApplicationController
     if code
       token = TUDOU_CLIENT.auth_code.get_token(code, :redirect_uri => oauth_callback_url)
       h_token = token.to_hash
-      render text: "#{h_token[:access_token]}"
+      client = HTTPClient.new()
+      fav_list = client.post('http://api.tudou.com/v6/user/fav_list', 'access_token' => h_token[:access_token], 'app_key' => TUDOU_APP_KEY)
+      render text: "#{fav_list.body}"
     else
       render text: params['error_info']
     end
